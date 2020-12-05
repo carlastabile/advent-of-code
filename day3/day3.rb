@@ -1,26 +1,38 @@
-require 'awesome_print'
-
 def load_map
 	rows = File.read("input.txt").split("\n")
   rows.map{ |row| row.chars }
 end
 
-def count_trees(map, slope_right: 3, slope_down: 1)
+def count_trees(map, slope_right, slope_down)
   trees = 0
-  m = map.length 
-  n = map[0].length
+  
+  # starting point 
+  x = slope_right 
+  y = slope_down
 
-  map.each_with_index do |row, i|
-    row.with_index do |_, j|
-      break if n - slope_right <= j 
-
-      elem = row[i+slope_down][j+slope_right]
-      trees += 1 if elem == "#"
+  while y < map.length do 
+    if x > map[y].length - 1
+      x = x % map[y].length
     end
+      
+    trees += 1 if map[y][x] == "#"
+
+    x += slope_right 
+    y += slope_down
   end
 
   trees
 end
 
-map = load_trees
-puts count_trees(map)
+map = load_map
+
+puts "Part 1"
+puts count_trees(map, 3, 1)
+
+
+puts "Part 2"
+
+slopes = [[1,1],[3,1],[5,1],[7,1], [1,2]]
+puts slopes.map{ |slope| count_trees(map, *slope)}.reduce(:*)
+
+
