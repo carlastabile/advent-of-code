@@ -12,39 +12,42 @@ def load_passports
   end
 end
 
-def present?(passport, fields = [:byr, :iyr, :eyr, :hgt, :hcl, :ecl, :pid])
+def all_fields?(passport, fields = [:byr, :iyr, :eyr, :hgt, :hcl, :ecl, :pid])
   (fields - passport.keys).empty?
 end
 
 def hgt_valid?(hgt)
+  metric = hgt[-2..-1]
+  height = hgt.delete_suffix(metric) 
 
-  if hgt.end_with?("cm")
-    value = hgt.split("cm")[0]
-    return false unless value.scan(/\D/).empty? 
-    return false if value.to_i < 150 || value.to_i > 193
-  end
-
-  if hgt.end_with?("in")
-    value = hgt.split("in")[0]
-    return false unless value.scan(/\D/).empty?
-    return false if value.to_i < 59 || value.to_i > 76
+  if metric == "cm"
+    return false unless in_range?(height.to_i, 150, 193)
+  elsif metric == "in"
+    return false unless in_range?(height.to_i, 59, 76)
+  else 
+    return false
   end
 
   true
 end
 
 def length_valid?(field, length)
-  !field.scan(/(\d){#{length}}$/).empty?
+  field.length == length
 end 
 
 def in_range?(field, lower, higher)
   field.to_i >= lower && field.to_i <= higher
 end 
 
+def matches?(regex, field)
+  !regex.match(field).nil?
+end 
+
 passports = load_passports
 
 # Part 1 
-puts passports.count { |p| present?(p) }
+all_fields_passport = passports.select { |p| all_fields?(p) }
+puts all_fields_passport.count
 
 # Part 2 
 validations = {
@@ -52,19 +55,17 @@ validations = {
   iyr: ->(field) { length_valid?(field, 4) && in_range?(field, 2010, 2020) },
   eyr: ->(field) { length_valid?(field, 4) && in_range?(field, 2020, 2030) },
   hgt: ->(field) { hgt_valid?(field) },
-  hcl: ->(field) { !/#([a-f|0-9]){6}$/.match(field).nil? },
+  hcl: ->(field) { matches?(/#([a-f|0-9]){6}$/, field) },
   ecl: ->(field) { %w[amb blu brn gry grn hzl oth].include?(field) },
-  pid: ->(field) { !/([0-9]){9}$/.match(field).nil? }
+  pid: ->(field) { matches?(/([0-9]){9}$/, field) }
 }
 
 count = 0
-passports.each do |passport|
-  next unless present?(passport)
-  puts "-----"
-  count += 1 if validations.map do |field, validation|
-                  is = validation.call(passport[field])
-                  puts "for #{field} #{passport[field]} validation #{is}"
-                end.compact.all?
+all_fields_passport.each do |passport|
+  valids = validations.map do |field, validation|
+            validation.call(passport[field])
+          end.compact
+  count += 1 if valids.all?
 end 
 puts count
 
