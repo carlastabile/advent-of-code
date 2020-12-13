@@ -28,15 +28,32 @@ def who_contains_me(color, bags)
   who
 end
 
-def search(color, bags)
+# for some weird reason my approach here 
+# was to count who contains my bag 
+def search_containers(color, bags)
   containers = who_contains_me(color, bags)
-  return color if containers.empty?
+  if containers.empty?
+    return color 
+  end
+  return (containers + containers.map{ |c| search_containers(c, bags)}).flatten.uniq
+end
+
+
+def sum_containers(color, bags)
+  children = bags[color]
   
-  return (containers + containers.map{ |c| search(c, bags)}).flatten.uniq
+  if children.nil? || children.empty?
+    return 0
+  end
+
+  sum = bags[color].map{ |elem| elem[:amount]}.sum
+  return sum + children.sum{ |c| c[:amount] * sum_containers(c[:bag], bags)}
 end
 
 bags = load_bags
 # Part 1 
-ap search("shiny gold", bags).size
+puts search_containers("shiny gold", bags).size
 
+# Part 2 
+puts sum_containers("shiny gold", bags)
 
