@@ -1,4 +1,5 @@
 require "pry"
+require "awesome_print"
 
 def load_bags
   bags = {}
@@ -18,4 +19,24 @@ def load_bags
   end
   bags
 end
-puts load_bags
+
+def who_contains_me(color, bags)
+  who = []
+  bags.select do |bag, contained|
+    who << bag unless contained.select { |bag| bag[:bag] if bag[:bag] == color}.empty?
+  end
+  who
+end
+
+def search(color, bags)
+  containers = who_contains_me(color, bags)
+  return color if containers.empty?
+  
+  return (containers + containers.map{ |c| search(c, bags)}).flatten.uniq
+end
+
+bags = load_bags
+# Part 1 
+ap search("shiny gold", bags).size
+
+
