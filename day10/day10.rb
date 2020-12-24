@@ -12,7 +12,7 @@ def difference(n)
   adapters.find{ |m| dfs.include?(m) }
 end
 
-def solution
+def part1
   # adapter.max + 3 (max joltage)
   max = adapters.max + 3
   result = { 1 => 1, 3 => 1}
@@ -22,8 +22,18 @@ def solution
     diff = difference(adapter)
     result[diff - adapter] += 1
   end
-  puts result
-  result
+  result.values.reduce(:*)
 end
 
-puts solution.values.reduce(:*)
+def part2
+  options = Hash.new(0)
+  options[0] = 1
+
+  adapters.each do |adapter|
+    options[adapter] = [1, 2, 3].sum { |diff| options[adapter - diff] }
+  end
+  options[adapters.max]
+end
+
+puts part1
+puts part2
