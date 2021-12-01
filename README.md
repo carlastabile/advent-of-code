@@ -1,8 +1,10 @@
-# Advent of Code 2020 
+# Advent of Code  
 
-First time ever doing an advent of code. Initially I started using python3 but then switched to ruby because ruby is life. 
+First time ever doing an advent of code was 2020. Initially I started using python3 but then switched to ruby because ruby is life. 
 
-Each folder contains the challenge of a day and my answer. 
+For 2021 I'll try again with python3! Fingers crossed 🤞🏼
+
+Each folder contains a year and each year the challenge of a day and my answer. 
 
 I usually start with a naive answer and try to iterate over it to improve. Nonetheless, I can't promess I iterated over all of them :D 
 
