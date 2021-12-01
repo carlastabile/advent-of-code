@@ -12,4 +12,4 @@ I usually start with a naive answer and try to iterate over it to improve. Nonet
 I feel fancy, but if you want to contribute by improving my answers please feel fre to open a PR. What's a GitHub repo without PRs am I right?
 
 ## Be nice 
-No rude comments are accepted under this space. This is a feel safe space.
+No rude comments are accepted under this space. This is a safe space.
